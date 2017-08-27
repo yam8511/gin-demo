@@ -1,0 +1,8 @@
+package: gin-demo
+import:
+- package: github.com/gin-gonic/gin
+- package: github.com/googollee/go-socket.io
+- package: github.com/joho/godotenv
+  subpackages:
+  - autoload
+- package: github.com/tucnak/telebot

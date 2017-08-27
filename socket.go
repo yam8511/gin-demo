@@ -11,21 +11,25 @@ import (
 	"github.com/googollee/go-socket.io"
 )
 
+var room string
+
 // SocketInit : 初始化 Socket.io Server
 func SocketInit() *socketio.Server {
+	room = "zuolar"
+
 	server, err := socketio.NewServer(nil)
 	CheckErrFatal(err, err, "建立 WebSocket 錯誤")
 
 	server.On("connection", func(so socketio.Socket) {
-		log.Println("on connection")
-		so.Join("melon")
+		log.Println("websocket on connection")
+		so.Join(room)
 
 		so.On("chat message", func(msg string) {
-			server.BroadcastTo("melon", "chat message", msg)
+			server.BroadcastTo(room, "chat message", msg)
 		})
 
 		so.On("disconnection", func() {
-			log.Println("on disconnect")
+			log.Println("websocket on disconnect")
 		})
 	})
 
@@ -67,7 +71,7 @@ func BroadcastHandle(so *socketio.Server) gin.HandlerFunc {
 			resData = jsonData
 		}
 
-		so.BroadcastTo("melon", event, resData)
+		so.BroadcastTo(room, event, resData)
 		c.JSON(http.StatusOK, gin.H{
 			"event": event,
 			"data":  resData,

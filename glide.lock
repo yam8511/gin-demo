@@ -1,0 +1,56 @@
+hash: dff8956cf3ff6258ca636b2eb14793da8f87a54a255e2e5965b3e09d2330740e
+updated: 2017-08-27T12:39:55.490746568+08:00
+imports:
+- name: github.com/armon/go-radix
+  version: 1fca145dffbcaa8fe914309b1ec0cfc67500fe61
+- name: github.com/gin-contrib/sse
+  version: 22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae
+- name: github.com/gin-gonic/gin
+  version: 211c48f0408804fdbc3b698cf53243da9699c376
+  subpackages:
+  - binding
+  - json
+  - render
+- name: github.com/golang/protobuf
+  version: ab9f9a6dab164b7d1246e0e688b0ab7b94d8553e
+  subpackages:
+  - proto
+- name: github.com/googollee/go-engine.io
+  version: 80ae0e43aca17b4c5a6834999d0f2eaa16b9afda
+  subpackages:
+  - message
+  - parser
+  - polling
+  - transport
+  - websocket
+- name: github.com/googollee/go-socket.io
+  version: 5447e71f36d394766bf855d5714a487596809f0d
+- name: github.com/gorilla/websocket
+  version: a69d9f6de432e2c6b296a947d8a5ee88f68522cf
+- name: github.com/joho/godotenv
+  version: c9360df4d16dc0e391ea2f28da2d31a9ede2e26f
+  subpackages:
+  - autoload
+- name: github.com/json-iterator/go
+  version: 2dc0031b26575ddf5dab09ab7795105a05575473
+- name: github.com/mattn/go-isatty
+  version: fc9e8d8ef48496124e79ae0df75490096eccf6fe
+- name: github.com/mitchellh/hashstructure
+  version: 2bca23e0e452137f789efbc8610126fd8b94f73b
+- name: github.com/pkg/errors
+  version: c605e284fe17294bda444b34710735b29d1a9d90
+- name: github.com/tucnak/telebot
+  version: 6d3c0904bd9048377df2f1f5c9431504a98d227c
+- name: github.com/ugorji/go
+  version: 8c0409fcbb70099c748d71f714529204975f6c3f
+  subpackages:
+  - codec
+- name: golang.org/x/sys
+  version: 2d6f6f883a06fc0d5f4b14a81e4c28705ea64c15
+  subpackages:
+  - unix
+- name: gopkg.in/go-playground/validator.v8
+  version: 5f1438d3fca68893a817e4a66806cea46a9e4ebf
+- name: gopkg.in/yaml.v2
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+testImports: []

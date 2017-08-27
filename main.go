@@ -7,10 +7,8 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/googollee/go-socket.io"
 	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/tucnak/telebot"
@@ -66,20 +64,17 @@ func main() {
 
 	/// Create Gin Framework
 	r := gin.Default()
-	v1 := r.Group("/", func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", AccessOrigin)
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	})
-	{
-		v1.GET("/ping", pong)
-		v1.GET("/socket.io/", gin.WrapH(wsserver))
-		v1.POST("/broadcast", BroadcastHandle(wsserver))
-	}
-
-	// Demo
 	r.Static("/asset", "./asset")
 	r.LoadHTMLGlob("asset/*")
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/ping", pong)
+
+	// Socket Demo
+	r.GET("/socket.io/", func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", AccessOrigin)
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	}, gin.WrapH(wsserver))
+	r.POST("/broadcast", BroadcastHandle(wsserver))
+	r.GET("/socket-demo", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "chat.html", nil)
 	})
 
@@ -94,14 +89,6 @@ func CheckErrFatal(err interface{}, msg ...interface{}) {
 			log.Fatalln(err)
 		}
 		log.Fatalln(msg)
-	}
-}
-
-func authorizeDomain(host, port string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		if c.Request.Host != host+port {
-			c.String(http.StatusUnauthorized, "")
-		}
 	}
 }
 
@@ -136,42 +123,4 @@ func AllInput(req *http.Request) map[string]interface{} {
 	}
 
 	return v
-}
-
-// BroadcastHandle : 處理廣播的請求
-func BroadcastHandle(so *socketio.Server) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		required := []string{}
-		event, exists := c.GetQuery("event")
-		if !exists {
-			required = append(required, "event")
-		}
-
-		data, exists := c.GetQuery("data")
-		if !exists {
-			required = append(required, "data")
-		}
-
-		if len(required) > 0 {
-			message := strings.Join(required, ",")
-			c.JSON(http.StatusOK, gin.H{
-				"error": message + " 為必填欄位!",
-			})
-			return
-		}
-
-		jsonData := map[string]interface{}{}
-		var resData interface{}
-		resData = data
-		err := json.Unmarshal([]byte(data), &jsonData)
-		if err == nil {
-			resData = jsonData
-		}
-
-		so.BroadcastTo("melon", event, resData)
-		c.JSON(http.StatusOK, gin.H{
-			"event": event,
-			"data":  resData,
-		})
-	}
 }

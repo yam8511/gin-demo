@@ -86,6 +86,10 @@ func main() {
 		c.HTML(http.StatusOK, "chat.html", nil)
 	})
 
+	// GraphQL Demo
+	r.Any("/graphql", GraphQLHandle)
+	r.GET("/graphiql", GraphIQLHandle)
+
 	// Start Server
 	r.Run(PORT)
 }

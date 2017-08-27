@@ -1,5 +1,5 @@
-hash: dff8956cf3ff6258ca636b2eb14793da8f87a54a255e2e5965b3e09d2330740e
-updated: 2017-08-27T12:39:55.490746568+08:00
+hash: bcbbeca169499366853a05383a4bb24bc5c324b9c377ccd159d9a6ad8f35fad5
+updated: 2017-08-27T13:36:06.61308859+08:00
 imports:
 - name: github.com/armon/go-radix
   version: 1fca145dffbcaa8fe914309b1ec0cfc67500fe61
@@ -27,6 +27,8 @@ imports:
   version: 5447e71f36d394766bf855d5714a487596809f0d
 - name: github.com/gorilla/websocket
   version: a69d9f6de432e2c6b296a947d8a5ee88f68522cf
+- name: github.com/graphql-go/graphql
+  version: 105a6c24e6fdaf4008e56d947115a1a13dc46430
 - name: github.com/joho/godotenv
   version: c9360df4d16dc0e391ea2f28da2d31a9ede2e26f
   subpackages:

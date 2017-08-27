@@ -6,3 +6,4 @@ import:
   subpackages:
   - autoload
 - package: github.com/tucnak/telebot
+- package: github.com/graphql-go/graphql

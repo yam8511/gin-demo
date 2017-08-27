@@ -38,6 +38,7 @@ func main() {
 	CheckErrFatal(err, "讀取 .env 錯誤")
 
 	/// 存取 Env 變數
+	GinMode := os.Getenv("GIN_MODE")
 	HOST = os.Getenv("HOST")
 	PORT = ":" + os.Getenv("PORT")
 	AccessOrigin = os.Getenv("ACCESS_ORIGIN")
@@ -61,6 +62,13 @@ func main() {
 
 	// WebSocket Setting
 	wsserver := SocketInit()
+
+	// // Set Gin Mode
+	if GinMode == "release" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
 
 	/// Create Gin Framework
 	r := gin.Default()

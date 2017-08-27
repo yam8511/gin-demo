@@ -2,6 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
+	"math/rand"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +13,7 @@ import (
 
 // Todo : 工作項目
 type Todo struct {
-	ID   string `json:"id"`
+	ID   int    `json:"id"`
 	Text string `json:"text"`
 	Done bool   `json:"done"`
 }
@@ -23,7 +26,7 @@ var todoType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Todo",
 	Fields: graphql.Fields{
 		"id": &graphql.Field{
-			Type: graphql.String,
+			Type: graphql.Int,
 		},
 		"text": &graphql.Field{
 			Type: graphql.String,
@@ -36,9 +39,9 @@ var todoType = graphql.NewObject(graphql.ObjectConfig{
 
 func todoInit() {
 	TodoList = []Todo{
-		Todo{ID: "a", Text: "A todo not to forget", Done: true},
-		Todo{ID: "b", Text: "This is the most important", Done: false},
-		Todo{ID: "c", Text: "Please do this or else", Done: false},
+		Todo{ID: 1, Text: "A todo not to forget", Done: true},
+		Todo{ID: 2, Text: "This is the most important", Done: false},
+		Todo{ID: 3, Text: "Please do this or else", Done: false},
 	}
 }
 
@@ -46,9 +49,11 @@ func todoInit() {
 func GraphQLHandle(c *gin.Context) {
 	todoInit()
 	rootQuery := schemaQuerySetting()
+	rootMutation := schemaMutationSetting()
 
 	schema, err := graphql.NewSchema(graphql.SchemaConfig{
-		Query: rootQuery,
+		Query:    rootQuery,
+		Mutation: rootMutation,
 	})
 
 	if err != nil {
@@ -78,7 +83,7 @@ func GraphIQLHandle(c *gin.Context) {
 	c.HTML(http.StatusOK, "graphiql.html", nil)
 }
 
-// 設定 Query 設定
+// 設定 Query
 func schemaQuerySetting() *graphql.Object {
 	return graphql.NewObject(graphql.ObjectConfig{
 		Name: "RootQuery",
@@ -107,9 +112,55 @@ func schemaQuerySetting() *graphql.Object {
 	})
 }
 
+// 設定 Mutation
+func schemaMutationSetting() *graphql.Object {
+	return graphql.NewObject(graphql.ObjectConfig{
+		Name: "RootMutation",
+		Fields: graphql.Fields{
+			"createTodo": &graphql.Field{
+				Type:        todoType,
+				Description: "新增 Todo",
+				Args: graphql.FieldConfigArgument{
+					"text": &graphql.ArgumentConfig{
+						Type:        graphql.NewNonNull(graphql.String),
+						Description: "要新增的 Todo 文字",
+					},
+				},
+				Resolve: actionTodoResolveFn,
+			},
+			"updateTodo": &graphql.Field{
+				Type:        todoType,
+				Description: "更新 Todo",
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type:        graphql.NewNonNull(graphql.Int),
+						Description: "要更新的 Todo ID",
+					},
+					"done": &graphql.ArgumentConfig{
+						Type:        graphql.NewNonNull(graphql.Boolean),
+						Description: "要更新的狀態",
+					},
+				},
+				Resolve: actionTodoResolveFn,
+			},
+			"deleteTodo": &graphql.Field{
+				Type:        todoType,
+				Description: "刪除 Todo",
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type:        graphql.NewNonNull(graphql.Int),
+						Description: "要刪除的 Todo ID",
+					},
+				},
+				Resolve: actionTodoResolveFn,
+			},
+		},
+	})
+}
+
 // todo 處理區
 func todoResolveFn(params graphql.ResolveParams) (interface{}, error) {
-	idQuery, isOK := params.Args["id"].(string)
+	idQuery, isOK := params.Args["id"].(int)
 	if isOK {
 		for _, todo := range TodoList {
 			if todo.ID == idQuery {
@@ -135,6 +186,49 @@ func todosResolveFn(params graphql.ResolveParams) (interface{}, error) {
 	}
 
 	return TodoList, nil
+}
+
+// todo 動作區
+func actionTodoResolveFn(params graphql.ResolveParams) (interface{}, error) {
+	text, isCreateTodo := params.Args["text"].(string)
+	done, isUpdateTodo := params.Args["done"].(bool)
+	id, isDeleteTodo := params.Args["id"].(int)
+
+	if isCreateTodo {
+		newTodo := Todo{
+			ID:   rand.Int(),
+			Text: text,
+			Done: false,
+		}
+		TodoList := append(TodoList, newTodo)
+		log.Println("Create", TodoList)
+		return newTodo, nil
+	}
+
+	if isUpdateTodo {
+		for index, todo := range TodoList {
+			if todo.ID == id {
+				TodoList[index].Done = done
+
+				log.Println("Update", TodoList)
+				return TodoList[index], nil
+			}
+		}
+		return Todo{}, errors.New("Todo not exists")
+	}
+
+	if isDeleteTodo {
+		for index, todo := range TodoList {
+			if id != todo.ID {
+				TodoList = append(TodoList[:index], TodoList[index+1:]...)
+				log.Println("Delete", TodoList)
+				return TodoList, nil
+			}
+		}
+		return Todo{}, errors.New("Todo not exists")
+	}
+
+	return Todo{}, errors.New("Incorrect Mutation")
 }
 
 // 執行Query查詢

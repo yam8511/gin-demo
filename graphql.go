@@ -47,7 +47,6 @@ func todoInit() {
 
 // GraphQLHandle : GraphQL Schema
 func GraphQLHandle(c *gin.Context) {
-	todoInit()
 	rootQuery := schemaQuerySetting()
 	rootMutation := schemaMutationSetting()
 
@@ -93,7 +92,7 @@ func schemaQuerySetting() *graphql.Object {
 				Description: "取單一個 todo",
 				Args: graphql.FieldConfigArgument{
 					"id": &graphql.ArgumentConfig{
-						Type: graphql.String,
+						Type: graphql.Int,
 					},
 				},
 				Resolve: todoResolveFn,
@@ -196,11 +195,11 @@ func actionTodoResolveFn(params graphql.ResolveParams) (interface{}, error) {
 
 	if isCreateTodo {
 		newTodo := Todo{
-			ID:   rand.Int(),
+			ID:   rand.Intn(100),
 			Text: text,
 			Done: false,
 		}
-		TodoList := append(TodoList, newTodo)
+		TodoList = append(TodoList, newTodo)
 		log.Println("Create", TodoList)
 		return newTodo, nil
 	}
@@ -214,17 +213,19 @@ func actionTodoResolveFn(params graphql.ResolveParams) (interface{}, error) {
 				return TodoList[index], nil
 			}
 		}
+		log.Println("Update", TodoList)
 		return Todo{}, errors.New("Todo not exists")
 	}
 
 	if isDeleteTodo {
 		for index, todo := range TodoList {
-			if id != todo.ID {
+			if id == todo.ID {
 				TodoList = append(TodoList[:index], TodoList[index+1:]...)
 				log.Println("Delete", TodoList)
-				return TodoList, nil
+				return todo, nil
 			}
 		}
+		log.Println("Delete", TodoList)
 		return Todo{}, errors.New("Todo not exists")
 	}
 

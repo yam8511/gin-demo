@@ -87,6 +87,7 @@ func main() {
 	})
 
 	// GraphQL Demo
+	todoInit()
 	r.Any("/graphql", GraphQLHandle)
 	r.GET("/graphiql", GraphIQLHandle)
 

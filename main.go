@@ -112,7 +112,7 @@ func main() {
 	go func() {
 		/// 監聽伺服器
 		log.Println("Server Listening on ", HOST+PORT)
-		Bot.SendMessage(AdminChat, HOST+PORT+" 伺服器開啟了!", nil)
+		Bot.SendMessage(AdminChat, HOST+" 伺服器開啟了!", nil)
 		err = server.ListenAndServe()
 
 		// 如果監聽發生錯誤，通知系統人員

@@ -3,8 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"log"
-	"math/rand"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -195,12 +193,11 @@ func actionTodoResolveFn(params graphql.ResolveParams) (interface{}, error) {
 
 	if isCreateTodo {
 		newTodo := Todo{
-			ID:   rand.Intn(100),
+			ID:   TodoList[len(TodoList)-1].ID + 1,
 			Text: text,
 			Done: false,
 		}
 		TodoList = append(TodoList, newTodo)
-		log.Println("Create", TodoList)
 		return newTodo, nil
 	}
 
@@ -208,12 +205,9 @@ func actionTodoResolveFn(params graphql.ResolveParams) (interface{}, error) {
 		for index, todo := range TodoList {
 			if todo.ID == id {
 				TodoList[index].Done = done
-
-				log.Println("Update", TodoList)
 				return TodoList[index], nil
 			}
 		}
-		log.Println("Update", TodoList)
 		return Todo{}, errors.New("Todo not exists")
 	}
 
@@ -221,11 +215,9 @@ func actionTodoResolveFn(params graphql.ResolveParams) (interface{}, error) {
 		for index, todo := range TodoList {
 			if id == todo.ID {
 				TodoList = append(TodoList[:index], TodoList[index+1:]...)
-				log.Println("Delete", TodoList)
 				return todo, nil
 			}
 		}
-		log.Println("Delete", TodoList)
 		return Todo{}, errors.New("Todo not exists")
 	}
 

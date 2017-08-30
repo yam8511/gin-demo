@@ -112,8 +112,8 @@ func main() {
 	go func() {
 		/// 監聽伺服器
 		log.Println("Server Listening on ", HOST+PORT)
-		err = server.ListenAndServe()
 		Bot.SendMessage(AdminChat, HOST+PORT+" 伺服器開啟了!", nil)
+		err = server.ListenAndServe()
 
 		// 如果監聽發生錯誤，通知系統人員
 		if err != nil {
@@ -157,7 +157,7 @@ func CheckErrFatal(err interface{}, msg ...interface{}) {
 
 // NoticeSystemManager : 通知系統人員
 func NoticeSystemManager(err interface{}) {
-	message := HOST + " 伺服器關閉了!  "
+	message := HOST + PORT + " 伺服器關閉了!  "
 	if err != nil {
 		message += fmt.Sprintf("(%v)", err)
 	} else {

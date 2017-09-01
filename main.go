@@ -77,8 +77,9 @@ func main() {
 	/// Create Gin Framework
 	r := gin.Default()
 	r.Static("/asset", "./asset")
-	r.LoadHTMLGlob("asset/*")
+	r.LoadHTMLGlob("view/*")
 	r.GET("/ping", pong)
+	r.NoRoute(NotFoundHandle)
 
 	/// Socket Demo
 	r.GET("/socket.io/", func(c *gin.Context) {
@@ -164,6 +165,11 @@ func NoticeSystemManager(err interface{}) {
 		message += "(手動關閉)"
 	}
 	Bot.SendMessage(AdminChat, message, nil)
+}
+
+// NotFoundHandle : 404 Page
+func NotFoundHandle(c *gin.Context) {
+	c.HTML(http.StatusNotFound, "404.html", nil)
 }
 
 func pong(c *gin.Context) {

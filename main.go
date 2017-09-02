@@ -82,19 +82,22 @@ func main() {
 	r.NoRoute(NotFoundHandle)
 
 	/// Socket Demo
-	r.GET("/socket.io/", func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", AccessOrigin)
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	}, gin.WrapH(wsserver))
-	r.POST("/broadcast", BroadcastHandle(wsserver))
-	r.GET("/socket-demo", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "chat.html", nil)
-	})
+	socket := r.Group("/", AccessAllowSetting)
+	{
+		socket.GET("/socket.io/", gin.WrapH(wsserver))
+		socket.POST("/broadcast", BroadcastHandle(wsserver))
+		socket.GET("/socket-demo", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "chat.html", nil)
+		})
+	}
 
 	/// GraphQL Demo
 	todoInit()
-	r.Any("/graphql", GraphQLHandle)
-	r.GET("/graphiql", GraphIQLHandle)
+	graphql := r.Group("/", AccessAllowSetting)
+	{
+		graphql.Any("/graphql", GraphQLHandle)
+		graphql.GET("/graphiql", GraphIQLHandle)
+	}
 
 	/// 宣告系統信號
 	sigs := make(chan os.Signal, 1)
@@ -165,6 +168,12 @@ func NoticeSystemManager(err interface{}) {
 		message += "(手動關閉)"
 	}
 	Bot.SendMessage(AdminChat, message, nil)
+}
+
+// AccessAllowSetting : 伺服器存取權限設定
+func AccessAllowSetting(c *gin.Context) {
+	c.Writer.Header().Set("Access-Control-Allow-Origin", AccessOrigin)
+	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
 // NotFoundHandle : 404 Page

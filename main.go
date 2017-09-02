@@ -23,9 +23,6 @@ var HOST string
 // PORT : Port Number
 var PORT string
 
-// AccessOrigin : 跨網域存取權限
-var AccessOrigin string
-
 // BotToken : TeleBot Token
 var BotToken string
 
@@ -53,7 +50,6 @@ func main() {
 	GinMode := os.Getenv("GIN_MODE")
 	HOST = os.Getenv("HOST")
 	PORT = ":" + os.Getenv("PORT")
-	AccessOrigin = os.Getenv("ACCESS_ORIGIN")
 	BotToken = os.Getenv("BOT_TOKEN")
 	cahtid, err := strconv.Atoi(os.Getenv("CHAT_ID"))
 	CheckErrFatal(err, "Error Type: BOT_TOKEN")
@@ -172,8 +168,16 @@ func NoticeSystemManager(err interface{}) {
 
 // AccessAllowSetting : 伺服器存取權限設定
 func AccessAllowSetting(c *gin.Context) {
+	// AccessOrigin : 跨網域存取權限
+	AccessOrigin := os.Getenv("ACCESS_ORIGIN")
+	AccessCredentials := os.Getenv("ACCESS_CREDENTIAL")
+	AccessHeaders := os.Getenv("ACCESS_HEADER")
+	AccessMethods := os.Getenv("ACCESS_METHOD")
+
 	c.Writer.Header().Set("Access-Control-Allow-Origin", AccessOrigin)
-	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	c.Writer.Header().Set("Access-Control-Allow-Credentials", AccessCredentials)
+	c.Writer.Header().Set("Access-Control-Allow-Headers", AccessHeaders)
+	c.Writer.Header().Set("Access-Control-Allow-Methods", AccessMethods)
 }
 
 // NotFoundHandle : 404 Page

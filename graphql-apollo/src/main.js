@@ -6,31 +6,29 @@ import App from './App'
 Vue.config.productionTip = false
 
 // Apollo
-import {
-  ApolloClient,
-  createBatchingNetworkInterface
-} from 'apollo-client'
+import { ApolloClient, createBatchingNetworkInterface } from 'apollo-client'
 import VueApollo from 'vue-apollo'
 
 // Create the apollo client
 const apolloClient = new ApolloClient({
   networkInterface: createBatchingNetworkInterface({
-    uri: 'http://zuolar.local:8000/apollo-graphql',
-    transportBatching: true
+    uri: 'https://zuolar-go.herokuapp.com/apollo-graphql'
   }),
-  connectToDevTools: false
+  connectToDevTools: true
 })
 
 // Install the vue plugin
 Vue.use(VueApollo)
-const apolloProvier = new VueApollo({
+
+// Create the apollo provider
+const apolloProvider = new VueApollo({
   defaultClient: apolloClient
 })
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  apolloProvier,
+  apolloProvider,
   template: '<App/>',
   components: {
     App

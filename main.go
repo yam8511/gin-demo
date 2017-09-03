@@ -90,11 +90,15 @@ func main() {
 	/// GraphQL Demo
 	todoInit()
 	schemaInit()
+	r.Static("/static", "./static")
 	graphql := r.Group("/", AccessAllowSetting)
 	{
 		graphql.Any("/graphql", GraphQLHandle)
-		graphql.Any("/apollo-graphql", ApolloGraphQLHandle)
 		graphql.GET("/graphiql", GraphIQLHandle)
+		graphql.Any("/apollo-graphql", ApolloGraphQLHandle)
+		graphql.GET("/apollo-todo", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "apollo-todo.html", nil)
+		})
 	}
 
 	/// 宣告系統信號

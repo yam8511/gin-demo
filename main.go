@@ -89,9 +89,11 @@ func main() {
 
 	/// GraphQL Demo
 	todoInit()
+	schemaInit()
 	graphql := r.Group("/", AccessAllowSetting)
 	{
 		graphql.Any("/graphql", GraphQLHandle)
+		graphql.Any("/apollo-graphql", ApolloGraphQLHandle)
 		graphql.GET("/graphiql", GraphIQLHandle)
 	}
 
@@ -112,7 +114,7 @@ func main() {
 	go func() {
 		/// 監聽伺服器
 		log.Println("Server Listening on ", HOST+PORT)
-		Bot.SendMessage(AdminChat, HOST+PORT+" 伺服器開啟了!", nil)
+		go Bot.SendMessage(AdminChat, HOST+PORT+" 伺服器開啟了!", nil)
 		err = server.ListenAndServe()
 
 		// 如果監聽發生錯誤，通知系統人員

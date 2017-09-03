@@ -3,11 +3,15 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/graphql-go/graphql"
 )
+
+// Schema : 腳本
+var Schema graphql.Schema
 
 // Todo : 工作項目
 type Todo struct {
@@ -43,18 +47,42 @@ func todoInit() {
 	}
 }
 
-// GraphQLHandle : GraphQL Schema
-func GraphQLHandle(c *gin.Context) {
+func schemaInit() {
 	rootQuery := schemaQuerySetting()
 	rootMutation := schemaMutationSetting()
 
-	schema, err := graphql.NewSchema(graphql.SchemaConfig{
+	Schema, _ = graphql.NewSchema(graphql.SchemaConfig{
 		Query:    rootQuery,
 		Mutation: rootMutation,
 	})
+}
 
+// ApolloGraphQLHandle : GraphQL
+func ApolloGraphQLHandle(c *gin.Context) {
+	if c.Request.Method == "OPTIONS" {
+		c.Status(http.StatusNoContent)
+		return
+	}
+
+	resultList := []*graphql.Result{}
+	apolloData := []map[string]interface{}{}
+	err := json.NewDecoder(c.Request.Body).Decode(&apolloData)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		log.Println("APOLLO DECODE ERROR", err)
+	} else {
+		for _, data := range apolloData {
+			query, _ := data["query"].(string)
+			resultList = append(resultList, executeQuery(query, Schema))
+		}
+	}
+	c.JSON(http.StatusOK, resultList)
+	return
+}
+
+// GraphQLHandle : GraphQL Schema
+func GraphQLHandle(c *gin.Context) {
+	if c.Request.Method == "OPTIONS" {
+		c.Status(http.StatusNoContent)
 		return
 	}
 
@@ -62,15 +90,16 @@ func GraphQLHandle(c *gin.Context) {
 	queryString := ""
 	if contentType == "application/json" {
 		jsonData := map[string]interface{}{}
-		err = json.NewDecoder(c.Request.Body).Decode(&jsonData)
+		err := json.NewDecoder(c.Request.Body).Decode(&jsonData)
 		if err == nil {
+			log.Println("json", jsonData)
 			queryString, _ = jsonData["query"].(string)
 		}
 	} else {
 		queryString = c.Query("query")
 	}
 
-	result := executeQuery(queryString, schema)
+	result := executeQuery(queryString, Schema)
 
 	c.JSON(http.StatusOK, result)
 }

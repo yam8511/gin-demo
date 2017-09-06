@@ -11,12 +11,10 @@ import (
 	"github.com/googollee/go-socket.io"
 )
 
-var room string
+var room string = "zuolar"
 
 // SocketInit : 初始化 Socket.io Server
 func SocketInit() *socketio.Server {
-	room = "zuolar"
-
 	server, err := socketio.NewServer(nil)
 	CheckErrFatal(err, err, "建立 WebSocket 錯誤")
 

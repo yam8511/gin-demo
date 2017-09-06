@@ -83,6 +83,18 @@ func main() {
 		socket.GET("/socket.io/", gin.WrapH(wsserver))
 		socket.POST("/broadcast", BroadcastHandle(wsserver))
 		socket.GET("/socket-demo", func(c *gin.Context) {
+			if pusher, ok := c.Writer.(http.Pusher); ok {
+				// Push is supported
+				if err = pusher.Push("/asset/js/socket.io-1.3.7.js", nil); err != nil {
+					log.Println("Server Push Error", err)
+				}
+
+				if err = pusher.Push("/asset/js/jquery-1.11.1.js", nil); err != nil {
+					log.Println("Server Push Error", err)
+				}
+			} else {
+				log.Println("Server Push is not supported!")
+			}
 			c.HTML(http.StatusOK, "chat.html", nil)
 		})
 	}

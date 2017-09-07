@@ -72,7 +72,11 @@ func ApolloGraphQLHandle(c *gin.Context) {
 	} else {
 		for _, data := range apolloData {
 			query, _ := data["query"].(string)
-			resultList = append(resultList, executeQuery(query, Schema))
+			operationName, _ := data["operationName"].(string)
+			variables := map[string]interface{}{}
+			json.Unmarshal([]byte(data["variables"].(string)), &variables)
+			result := executeQuery(operationName, query, variables, Schema)
+			resultList = append(resultList, result)
 		}
 	}
 	c.JSON(http.StatusOK, resultList)
@@ -87,19 +91,23 @@ func GraphQLHandle(c *gin.Context) {
 	}
 
 	contentType := c.Request.Header.Get("content-type")
-	queryString := ""
+	var result interface{}
 	if contentType == "application/json" {
 		jsonData := map[string]interface{}{}
 		err := json.NewDecoder(c.Request.Body).Decode(&jsonData)
 		if err == nil {
 			log.Println("json", jsonData)
-			queryString, _ = jsonData["query"].(string)
+			queryString, _ := jsonData["query"].(string)
+			operationName, _ := jsonData["operationName"].(string)
+			jsonVariables, _ := jsonData["variables"].(string)
+			variables := map[string]interface{}{}
+			json.Unmarshal([]byte(jsonVariables), &variables)
+			result = executeQuery(operationName, queryString, variables, Schema)
 		}
 	} else {
-		queryString = c.Query("query")
+		queryString := c.Query("query")
+		result = executeQuery("", queryString, map[string]interface{}{}, Schema)
 	}
-
-	result := executeQuery(queryString, Schema)
 
 	c.JSON(http.StatusOK, result)
 }
@@ -254,10 +262,12 @@ func actionTodoResolveFn(params graphql.ResolveParams) (interface{}, error) {
 }
 
 // 執行Query查詢
-func executeQuery(query string, schema graphql.Schema) *graphql.Result {
+func executeQuery(operationName string, query string, variables map[string]interface{}, schema graphql.Schema) *graphql.Result {
 	result := graphql.Do(graphql.Params{
-		Schema:        schema,
-		RequestString: query,
+		Schema:         schema,
+		OperationName:  operationName,
+		RequestString:  query,
+		VariableValues: variables,
 	})
 
 	return result

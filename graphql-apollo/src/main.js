@@ -12,7 +12,7 @@ import VueApollo from 'vue-apollo'
 // Create the apollo client
 const apolloClient = new ApolloClient({
   networkInterface: createBatchingNetworkInterface({
-    uri: 'https://zuolar-go.herokuapp.com/apollo-graphql'
+    uri: 'http://localhost:8000/apollo-graphql'
   }),
   connectToDevTools: true
 })

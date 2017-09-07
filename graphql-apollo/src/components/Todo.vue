@@ -34,11 +34,10 @@ export default {
   apollo: {
     todos: {
       variables: {
-        Done: true
       },
       // query
-      query: gql`{
-        todos {
+      query: gql`query getTodo($Done: Boolean) {
+        todos(done: $Done) {
           id
           text
           done

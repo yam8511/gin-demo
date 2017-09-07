@@ -72,12 +72,19 @@ func main() {
 
 	/// Create Gin Framework
 	r := gin.Default()
-	r.Static("/asset", "./asset")
 	r.LoadHTMLGlob("view/*")
 	r.GET("/ping", pong)
 	r.NoRoute(NotFoundHandle)
 
+	/// Home Demo
+	r.Static("/assets", "./assets")
+	r.Static("/images", "./images")
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
+	})
+
 	/// Socket Demo
+	r.Static("/asset", "./asset")
 	socket := r.Group("/", AccessAllowSetting)
 	{
 		socket.GET("/socket.io/", gin.WrapH(wsserver))
@@ -132,6 +139,7 @@ func main() {
 		log.Println("Server Listening on ", HOST+PORT)
 		go Bot.SendMessage(AdminChat, HOST+PORT+" 伺服器開啟了!", nil)
 		err = server.ListenAndServe()
+		// err = server.ListenAndServeTLS("server.crt", "server.key")
 
 		// 如果監聽發生錯誤，通知系統人員
 		if err != nil {

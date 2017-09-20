@@ -83,6 +83,12 @@ func main() {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
+	/// Database Demo (Upper.io)
+	upper := r.Group("/")
+	{
+		upper.GET("/upper", upperDemo)
+	}
+
 	/// Socket Demo
 	r.Static("/asset", "./asset")
 	socket := r.Group("/", AccessAllowSetting)
@@ -137,7 +143,7 @@ func main() {
 	go func() {
 		/// 監聽伺服器
 		log.Println("Server Listening on ", HOST+PORT)
-		go Bot.SendMessage(AdminChat, HOST+PORT+" 伺服器開啟了!", nil)
+		// go Bot.SendMessage(AdminChat, HOST+PORT+" 伺服器開啟了!", nil)
 		err = server.ListenAndServe()
 		// err = server.ListenAndServeTLS("server.crt", "server.key")
 

@@ -7,3 +7,4 @@ import:
   - autoload
 - package: github.com/tucnak/telebot
 - package: github.com/graphql-go/graphql
+- package: upper.io/db.v3

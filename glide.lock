@@ -1,5 +1,5 @@
-hash: bcbbeca169499366853a05383a4bb24bc5c324b9c377ccd159d9a6ad8f35fad5
-updated: 2017-08-27T13:36:06.61308859+08:00
+hash: 1115a7a9df04bbbb5a84538795891945632c0efe41c37278af3fb49f4abb8e97
+updated: 2017-09-20T22:01:40.958907993+08:00
 imports:
 - name: github.com/armon/go-radix
   version: 1fca145dffbcaa8fe914309b1ec0cfc67500fe61
@@ -29,6 +29,17 @@ imports:
   version: a69d9f6de432e2c6b296a947d8a5ee88f68522cf
 - name: github.com/graphql-go/graphql
   version: 105a6c24e6fdaf4008e56d947115a1a13dc46430
+  subpackages:
+  - gqlerrors
+  - language/ast
+  - language/kinds
+  - language/lexer
+  - language/location
+  - language/parser
+  - language/printer
+  - language/source
+  - language/typeInfo
+  - language/visitor
 - name: github.com/joho/godotenv
   version: c9360df4d16dc0e391ea2f28da2d31a9ede2e26f
   subpackages:
@@ -55,4 +66,6 @@ imports:
   version: 5f1438d3fca68893a817e4a66806cea46a9e4ebf
 - name: gopkg.in/yaml.v2
   version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+- name: upper.io/db.v3
+  version: 46f50a98f8d5d77d1d4631f1bcc0ce6496e55734
 testImports: []

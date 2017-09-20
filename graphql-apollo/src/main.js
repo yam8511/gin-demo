@@ -11,14 +11,10 @@ import VueApollo from 'vue-apollo'
 
 // Create the apollo client
 var port = location.port
-if (port === '') {
-  port = '80'
+if (port !== '') {
+  port = ':' + port
 }
-
-var url = 'http://localhost:8000/apollo-graphql'
-if (process.env.NODE_ENV === 'production') {
-  url = location.protocol + '//' + location.host + ':' + port + '/apollo-graphql'
-}
+var url = location.protocol + '//' + location.host + port + '/apollo-graphql'
 
 const apolloClient = new ApolloClient({
   networkInterface: createBatchingNetworkInterface({

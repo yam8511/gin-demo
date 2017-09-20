@@ -10,13 +10,6 @@ import (
 	"upper.io/db.v3/mysql"
 )
 
-var settings = mysql.ConnectionURL{
-	User:     "default",
-	Password: "secret",
-	Host:     "127.0.0.1",
-	Database: "default",
-}
-
 type User struct {
 	ID int `db:"id"`
 	// Maps the "Name" property to the "name" column
@@ -30,7 +23,7 @@ type User struct {
 func upperDemo(c *gin.Context) {
 
 	c.String(http.StatusOK, "DB Openning...\n")
-	sess, err := mysql.Open(settings)
+	sess, err := mysql.Open(DBConfig)
 	if err != nil {
 		log.Fatalf("db.Open(): %q\n", err)
 	}

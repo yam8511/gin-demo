@@ -8,3 +8,4 @@ import:
 - package: github.com/tucnak/telebot
 - package: github.com/graphql-go/graphql
 - package: upper.io/db.v3
+- package: github.com/go-sql-driver/mysql

@@ -1,5 +1,5 @@
-hash: 1115a7a9df04bbbb5a84538795891945632c0efe41c37278af3fb49f4abb8e97
-updated: 2017-09-20T22:01:40.958907993+08:00
+hash: a884f0609b9b21e2178e1ae67213bc77559329aaea6df61aece2958e2c8ef98b
+updated: 2017-09-21T00:24:18.029436653+08:00
 imports:
 - name: github.com/armon/go-radix
   version: 1fca145dffbcaa8fe914309b1ec0cfc67500fe61
@@ -11,6 +11,8 @@ imports:
   - binding
   - json
   - render
+- name: github.com/go-sql-driver/mysql
+  version: be22b3051b3467094e9908389d900e74f72cf08f
 - name: github.com/golang/protobuf
   version: ab9f9a6dab164b7d1246e0e688b0ab7b94d8553e
   subpackages:
@@ -68,4 +70,14 @@ imports:
   version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 - name: upper.io/db.v3
   version: 46f50a98f8d5d77d1d4631f1bcc0ce6496e55734
+  subpackages:
+  - internal/cache
+  - internal/cache/hashstructure
+  - internal/immutable
+  - internal/sqladapter
+  - internal/sqladapter/compat
+  - internal/sqladapter/exql
+  - lib/reflectx
+  - lib/sqlbuilder
+  - mysql
 testImports: []

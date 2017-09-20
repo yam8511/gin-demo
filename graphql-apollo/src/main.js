@@ -10,9 +10,13 @@ import { ApolloClient, createBatchingNetworkInterface } from 'apollo-client'
 import VueApollo from 'vue-apollo'
 
 // Create the apollo client
+var port = location.port
+if (port === '') {
+  port = '80'
+}
 const apolloClient = new ApolloClient({
   networkInterface: createBatchingNetworkInterface({
-    uri: 'http://localhost:8000/apollo-graphql'
+    uri: location.protocol + '//' + location.host + ':' + port + '/apollo-graphql'
   }),
   connectToDevTools: true
 })

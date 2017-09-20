@@ -62,13 +62,15 @@ func main() {
 
 	/// GraphQL Demo
 	todoInit()
-	schemaInit()
+	todoSchemaInit()
 	r.Static("/static", "./static")
 	graphql := r.Group("/", AccessAllowSetting)
 	{
-		graphql.Any("/graphql", GraphQLHandle)
-		graphql.GET("/graphiql", GraphIQLHandle)
-		graphql.Any("/apollo-graphql", ApolloGraphQLHandle)
+		graphql.Any("/graphql", todoGraphQLHandle)
+		graphql.GET("/graphiql", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "graphiql.html", nil)
+		})
+		graphql.Any("/apollo-graphql", todoApolloGraphQLHandle)
 		graphql.GET("/apollo-todo", func(c *gin.Context) {
 			c.HTML(http.StatusOK, "apollo-todo.html", nil)
 		})

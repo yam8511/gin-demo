@@ -14,9 +14,15 @@ var port = location.port
 if (port === '') {
   port = '80'
 }
+
+var url = 'http://localhost:8000/apollo-graphql'
+if (process.env.NODE_ENV === 'production') {
+  url = location.protocol + '//' + location.host + ':' + port + '/apollo-graphql'
+}
+
 const apolloClient = new ApolloClient({
   networkInterface: createBatchingNetworkInterface({
-    uri: location.protocol + '//' + location.host + ':' + port + '/apollo-graphql'
+    uri: url
   }),
   connectToDevTools: true
 })
